@@ -15,14 +15,14 @@ $(function () {
     }
 
     $("#button-connect").click(function () {
-        wsConnect();
+        wsConnect(true);
     });
 });
 
 /**
  * Helper Functions
  */
-function wsConnect() {
+function wsConnect(isManual) {
     if (!window.owiWSObject || !window.owiWSObject._connected) {
         let ip = $("#InputIP").val();
         let port = $("#InputPort").val();
@@ -176,16 +176,18 @@ function wsConnect() {
             $("#connect-form").hide();
             $("#connected-form").show();
 
-            let newUrl = "https://metalllogic93.github.io/obs-websocket-interface/?";
+            if (isManual) {
+                let newUrl = "https://metalllogic93.github.io/obs-websocket-interface/?";
 
-            newUrl = newUrl + "&ip=" + ip;
-            newUrl = newUrl + "&port=" + port;
+                newUrl = newUrl + "&ip=" + ip;
+                newUrl = newUrl + "&port=" + port;
 
-            if (password)
-                newUrl = newUrl + "&passwort=" + password;
+                if (password)
+                    newUrl = newUrl + "&passwort=" + password;
 
-            $("#custom-url").val(newUrl);
-            $('#url-modal').modal('show');
+                $("#custom-url").val(newUrl);
+                $('#url-modal').modal('show');
+            }
         });
     }
 }
