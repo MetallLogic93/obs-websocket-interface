@@ -1,3 +1,183 @@
 <html>
-<h1>Test</h1>
+<header>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="css/obs-websocket-interface-core.css">
+</header>
+<body>
+
+<!-- Navigation Start -->
+<nav class=" navbar navbar-expand-lg navbar-light bg-light
+    ">
+    <a class="navbar-brand" href="#">obs-websocket-interface</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav nav" id="v-pills-tab" aria-orientation="horizontal">
+            <a class="nav-link active" id="v-pills-connect-tab" data-toggle="pill" href="#v-pills-connect" role="tab"
+               aria-controls="v-pills-connect" aria-selected="true"> Connect </a>
+
+            <a class="nav-link invisible" id="v-pills-stream-tab" data-toggle="pill" href="#v-pills-stream" role="tab"
+               aria-controls="v-pills-stream" aria-selected="false"> Stream </a>
+
+            <a class="nav-link invisible" id="v-pills-profiles-tab" data-toggle="pill" href="#v-pills-profiles"
+               role="tab"
+               aria-controls="v-pills-profiles" aria-selected="false"> Profiles </a>
+
+            <a class="nav-link invisible" id="v-pills-scenes-tab" data-toggle="pill" href="#v-pills-scenes" role="tab"
+               aria-controls="v-pills-scenes" aria-selected="false"> Scenes </a>
+
+            <!--
+            <a class="nav-link invisible" id="v-pills-sound-tab" data-toggle="pill" href="#v-pills-sound" role="tab"
+               aria-controls="v-pills-sound" aria-selected="false"> Sound </a>
+               -->
+        </div>
+    </div>
+</nav>
+<!-- Navigation End-->
+
+<div class="tab-content body" id="v-pills-tabContent">
+    <!-- Nav: Connect -->
+    <div id="v-pills-connect" class="tab-pane fade show active" role="tabpanel">
+        <div id="connect-form">
+            <div class="form-group">
+                <label for="InputIP">IP</label>
+                <input type="text" class="form-control" id="InputIP" aria-describedby="ipHelp" placeholder="localhost">
+                <small id="ipHelp" class="form-text text-muted">Please input IP (e.g.: '8.8.8.8') or localhost</small>
+            </div>
+            <div class="form-group">
+                <label for="InputPort">Port</label>
+                <input type="text" class="form-control" id="InputPort" aria-describedby="portHelp" placeholder="4444">
+                <small id="portHelp" class="form-text text-muted">Please input Port (e.g.: '12345') or 4444</small>
+            </div>
+            <div class="form-group">
+                <label for="InputIP">Password</label>
+                <input type="password" class="form-control" id="InputPassword" aria-describedby="passwordHelp">
+                <small id="passwordHelp" class="form-text text-muted">Please input Password</small>
+            </div>
+            <button id="button-connect" type="button" class="btn btn-primary">Connect</button>
+        </div>
+        <div id="connected-form" style="display: none">
+            <p style="color: green;">OBS is connected</p>
+        </div>
+    </div>
+    <!-- Nav: Connect End -->
+
+    <!-- Nav: Profiles -->
+    <div id="v-pills-profiles" class="tab-pane fade" role="tabpanel">
+        <div class="form-group">
+            <label for="profile-list">Profile:</label>
+            <select class="form-control" id="profile-list"></select>
+        </div>
+        <button id="profiles-switch" type="button" class="btn btn-primary">Switch</button>
+    </div>
+    <!-- Nav: Profiles End -->
+
+    <!-- Nav: Scenes -->
+    <div id="v-pills-scenes" class="tab-pane fade" role="tabpanel">
+        <div class="form-group">
+            <label for="scenes-list">Scene:</label>
+            <select class="form-control" id="scenes-list"></select>
+        </div>
+        <button id="scenes-switch" type="button" class="btn btn-primary">Switch</button>
+    </div>
+    <!-- Nav: Scenes End -->
+
+    <!-- Nav: Stream -->
+    <div id="v-pills-stream" class="tab-pane fade" role="tabpanel">
+        <span id="state-online" style="color: green;">Online</span>
+        <span id="state-offline" style="color: red;">Offline</span>
+        <br>
+        <br>
+        <button id="stream-start" type="button" class="btn btn-primary">Start Stream</button>
+        <button id="stream-stop" type="button" class="btn btn-primary">Stop Stream</button>
+    </div>
+    <!-- Nav: Stream End -->
+
+    <!-- Nav: Sound -->
+    <!-- Prepared until obs-websocket-js implements this methods
+    <div id="v-pills-sound" class="tab-pane fade" role="tabpanel">
+        <div class="form-group" id="sound-scenes-list-group">
+            <label for="sound-scenes-list">Scene:</label>
+            <select class="form-control" id="sound-scenes-list" oninput="scenesInit()"></select>
+            <br>
+            <label for="sound-scenes-range">Volume:</label>
+            <input type="range" class="form-control-range" id="sound-scenes-range" min="0.0" max="1.0"
+                   oninput="scenesChanged()">
+        </div>
+        <br>
+        <div class="form-group" id="sound-input-list-group">
+            <label for="sound-input-list">Input:</label>
+            <select class="form-control" id="sound-input-list" oninput="inputInit()"></select>
+            <br>
+            <label for="sound-input-range">Volume:</label>
+            <input type="range" class="form-control-range" id="sound-input-range" min="0.0" max="1.0"
+                   oninput="inputChanged()">
+        </div>
+        <br>
+        <div class="form-group" id="sound-filter-list-group">
+            <label for="sound-filter-list">Filter:</label>
+            <select class="form-control" id="sound-filter-list" oninput="filterInit()"></select>
+            <br>
+            <label for="sound-filter-range">Volume:</label>
+            <input type="range" class="form-control-range" id="sound-filter-range" min="0.0" max="1.0"
+                   oninput="filterChanged()">
+        </div>
+        <br>
+        <div class="form-group" id="sound-transition-list-group">
+            <label for="sound-transition-list">Transition:</label>
+            <select class="form-control" id="sound-transition-list" oninput="transitionsInit()"></select>
+            <br>
+            <label for="sound-transition-range">Volume:</label>
+            <input type="range" class="form-control-range" id="sound-transition-range" min="0.0" max="1.0"
+                   oninput="transitionsChanged()">
+        </div>
+        <br>
+        <div class="form-group" id="sound-unknown-list-group">
+            <label for="sound-unknown-list">Unknown:</label>
+            <select class="form-control" id="sound-unknown-list" oninput="unknownInit()"></select>
+            <br>
+            <label for="sound-unknown-range">Volume:</label>
+            <input type="range" class="form-control-range" id="sound-unknown-range" min="0.0" max="1.0"
+                   oninput="unknownChanged()">
+        </div>
+    </div>
+     -->
+    <!-- Nav: Sound End -->
+</div>
+
+<!-- Modals -->
+<div id="url-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Direct Link</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>You could use your own link to directly connect. Just copy it from down below. Due to no saving process, this is the "comfort connect option"</p>
+                <input type="text" class="form-control" id="custom-url">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modals End -->
+
+<!-- Scripts Start -->
+<script src="js/jquery-3.3.1.slim.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/obs-websocket.js"></script>
+<script src="js/obs-websocket-interface-core.js"></script>
+<!-- Scripts End -->
+</body>
 </html>
