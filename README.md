@@ -13,4 +13,4 @@ Follow the Guides at
 <br>
 Use the Interface at
 <br>
-[Interface](http://MetallLogic93.github.io/obs-websocket-interface)
+[Interface](http://MetallLogic93.github.io/obs-websocket-interface/)
