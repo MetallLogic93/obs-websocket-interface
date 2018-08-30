@@ -1,3 +1,7 @@
 div.body {
     padding: 10px;
 }
+
+.profile-options, .scene-options {
+    margin: 2px;
+}

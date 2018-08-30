@@ -29,11 +29,6 @@
 
             <a class="nav-link invisible" id="v-pills-scenes-tab" data-toggle="pill" href="#v-pills-scenes" role="tab"
                aria-controls="v-pills-scenes" aria-selected="false"> Scenes </a>
-
-            <!--
-            <a class="nav-link invisible" id="v-pills-sound-tab" data-toggle="pill" href="#v-pills-sound" role="tab"
-               aria-controls="v-pills-sound" aria-selected="false"> Sound </a>
-               -->
         </div>
     </div>
 </nav>
@@ -68,27 +63,24 @@
 
     <!-- Nav: Profiles -->
     <div id="v-pills-profiles" class="tab-pane fade" role="tabpanel">
-        <div class="form-group">
-            <label for="profile-list">Profile:</label>
-            <select class="form-control" id="profile-list"></select>
+        <label for="profiles-view">Profiles:</label>
+        <div id="profiles-view" class="form-group">
         </div>
-        <button id="profiles-switch" type="button" class="btn btn-primary">Switch</button>
     </div>
     <!-- Nav: Profiles End -->
 
     <!-- Nav: Scenes -->
     <div id="v-pills-scenes" class="tab-pane fade" role="tabpanel">
-        <div class="form-group">
-            <label for="scenes-list">Scene:</label>
-            <select class="form-control" id="scenes-list"></select>
+        <label for="scenes-view">Scene:</label>
+        <div id="scenes-view" class="form-group">
         </div>
-        <button id="scenes-switch" type="button" class="btn btn-primary">Switch</button>
     </div>
     <!-- Nav: Scenes End -->
 
     <!-- Nav: Stream -->
     <div id="v-pills-stream" class="tab-pane fade" role="tabpanel">
-        <span id="state-online" style="color: green;">Online</span>
+        <span id="state-online" style="color: green; display: none">Online</span>
+        <span id="state-timer" style="color: green; display: none"></span>
         <span id="state-offline" style="color: red;">Offline</span>
         <br>
         <br>
@@ -97,56 +89,6 @@
     </div>
     <!-- Nav: Stream End -->
 
-    <!-- Nav: Sound -->
-    <!-- Prepared until obs-websocket-js implements this methods
-    <div id="v-pills-sound" class="tab-pane fade" role="tabpanel">
-        <div class="form-group" id="sound-scenes-list-group">
-            <label for="sound-scenes-list">Scene:</label>
-            <select class="form-control" id="sound-scenes-list" oninput="scenesInit()"></select>
-            <br>
-            <label for="sound-scenes-range">Volume:</label>
-            <input type="range" class="form-control-range" id="sound-scenes-range" min="0.0" max="1.0"
-                   oninput="scenesChanged()">
-        </div>
-        <br>
-        <div class="form-group" id="sound-input-list-group">
-            <label for="sound-input-list">Input:</label>
-            <select class="form-control" id="sound-input-list" oninput="inputInit()"></select>
-            <br>
-            <label for="sound-input-range">Volume:</label>
-            <input type="range" class="form-control-range" id="sound-input-range" min="0.0" max="1.0"
-                   oninput="inputChanged()">
-        </div>
-        <br>
-        <div class="form-group" id="sound-filter-list-group">
-            <label for="sound-filter-list">Filter:</label>
-            <select class="form-control" id="sound-filter-list" oninput="filterInit()"></select>
-            <br>
-            <label for="sound-filter-range">Volume:</label>
-            <input type="range" class="form-control-range" id="sound-filter-range" min="0.0" max="1.0"
-                   oninput="filterChanged()">
-        </div>
-        <br>
-        <div class="form-group" id="sound-transition-list-group">
-            <label for="sound-transition-list">Transition:</label>
-            <select class="form-control" id="sound-transition-list" oninput="transitionsInit()"></select>
-            <br>
-            <label for="sound-transition-range">Volume:</label>
-            <input type="range" class="form-control-range" id="sound-transition-range" min="0.0" max="1.0"
-                   oninput="transitionsChanged()">
-        </div>
-        <br>
-        <div class="form-group" id="sound-unknown-list-group">
-            <label for="sound-unknown-list">Unknown:</label>
-            <select class="form-control" id="sound-unknown-list" oninput="unknownInit()"></select>
-            <br>
-            <label for="sound-unknown-range">Volume:</label>
-            <input type="range" class="form-control-range" id="sound-unknown-range" min="0.0" max="1.0"
-                   oninput="unknownChanged()">
-        </div>
-    </div>
-     -->
-    <!-- Nav: Sound End -->
 </div>
 
 <!-- Modals -->

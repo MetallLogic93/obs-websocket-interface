@@ -36,138 +36,68 @@ function wsConnect(isManual) {
             $("#v-pills-stream-tab").click();
 
             window.owiWSObject.ListProfiles().then(data => {
-                const profileListElement = $("#profile-list");
+                const profileListElement = $("#profiles-view");
 
                 if (data.profiles.length > 1) {
                     data.profiles.forEach(profile => {
-                        profileListElement.append($("<option />")
+                        profileListElement.append($("<button type=\"button\" class=\"btn profile-options\"></button>")
                             .val(profile["profile-name"])
                             .text(profile["profile-name"])
-                        )
-                    });
+                            .click(function () {
+                                $(".profile-options").removeClass("btn-success");
+                                $(this).addClass("btn-success");
 
-                    $("#profiles-switch").click(function () {
-                        window.owiWSObject.setCurrentProfile({
-                            'profile-name': $("#profile-list").val()
-                        });
+                                window.owiWSObject.setCurrentProfile({
+                                    'profile-name': $(this).val()
+                                });
+                            })
+                        )
                     });
 
                     $("#v-pills-profiles-tab").removeClass("invisible");
                 }
             });
 
+            window.owiWSObject.GetCurrentProfile().then(data => {
+                const profileName = data["profile-name"];
+
+                $("button.profile-options").filter(function () {
+                    if ($(this).val() === profileName)
+                        $(this).addClass("btn-success");
+                });
+            });
+
             window.owiWSObject.GetSceneList().then(data => {
-                const sceneListElement = $("#scenes-list");
+                const sceneListElement = $("#scenes-view");
 
                 if (data.scenes.length > 1) {
                     data.scenes.forEach(scene => {
-                        sceneListElement.append($("<option />")
+                        sceneListElement.append($("<button type=\"button\" class=\"btn scene-options\"></button>")
                             .val(scene["name"])
                             .text(scene["name"])
+                            .click(function () {
+                                $(".scene-options").removeClass("btn-success");
+                                $(this).addClass("btn-success");
+
+                                window.owiWSObject.setCurrentScene({
+                                    'scene-name': $(this).val()
+                                });
+                            })
                         )
                     });
-
-                    $("#scenes-switch").click(function () {
-                        window.owiWSObject.setCurrentScene({
-                            'scene-name': $("#scenes-list").val()
-                        });
-                    });
                 }
             });
 
-            window.owiWSObject.GetStreamingStatus().then(data => {
-                if (data["streaming"]) {
-                    $("#state-online").show();
-                    $("#state-offline").hide();
-                    $("#stream-start").addClass('disabled');
-                    $("#stream-stop").removeClass('disabled');
-                } else {
-                    $("#state-online").hide();
-                    $("#state-offline").show();
-                    $("#stream-start").removeClass('disabled');
-                    $("#stream-stop").addClass('disabled');
-                }
+            window.owiWSObject.GetCurrentScene().then(data => {
+                const sceneName = data["name"];
 
-                $("#stream-start").click(function () {
-                    window.owiWSObject.StartStreaming();
-                });
-
-                $("#stream-stop").click(function () {
-                    window.owiWSObject.StopStreaming();
+                $("button.scene-options").filter(function () {
+                    if ($(this).val() === sceneName)
+                        $(this).addClass("btn-success");
                 });
             });
 
-            window.owiWSObject.GetSourcesList().then(data => {
-                let inputs = data["sources"].filter(function (obj) {
-                    return obj.type == "input";
-                });
-
-                if (inputs.length === 0)
-                    $("#sound-input-list-group").hide();
-
-                inputs.forEach(obj => {
-                    $("#sound-input-list").append($("<option />")
-                        .val(obj["name"])
-                        .text(obj["name"])
-                    )
-                });
-
-                let filter = data["sources"].filter(function (obj) {
-                    return obj.type == "filter";
-                });
-
-                if (filter.length === 0)
-                    $("#sound-filter-list-group").hide();
-
-                filter.forEach(obj => {
-                    $("#sound-filter-list").append($("<option />")
-                        .val(obj["name"])
-                        .text(obj["name"])
-                    )
-                });
-
-                let transition = data["sources"].filter(function (obj) {
-                    return obj.type == "transition";
-                });
-
-                if (transition.length === 0)
-                    $("#sound-transition-list-group").hide();
-
-                transition.forEach(obj => {
-                    $("#sound-transition-list").append($("<option />")
-                        .val(obj["name"])
-                        .text(obj["name"])
-                    )
-                });
-
-                let scenes = data["sources"].filter(function (obj) {
-                    return obj.type == "scene";
-                });
-
-                if (scenes.length === 0)
-                    $("#sound-scenes-list-group").hide();
-
-                scenes.forEach(obj => {
-                    $("#sound-scenes-list").append($("<option />")
-                        .val(obj["name"])
-                        .text(obj["name"])
-                    )
-                });
-
-                let unknown = data["sources"].filter(function (obj) {
-                    return obj.type == "unknown";
-                });
-
-                if (unknown.length === 0)
-                    $("#sound-unknown-list-group").hide();
-
-                unknown.forEach(obj => {
-                    $("#sound-unknown-list").append($("<option />")
-                        .val(obj["name"])
-                        .text(obj["name"])
-                    )
-                });
-            });
+            getStreamingStatus(true);
 
             $("#v-pills-scenes-tab").removeClass("invisible");
             $("#v-pills-stream-tab").removeClass("invisible");
@@ -192,6 +122,35 @@ function wsConnect(isManual) {
     }
 }
 
+function getStreamingStatus() {
+    $("#stream-start").click(function () {
+        window.owiWSObject.StartStreaming();
+    });
+
+    $("#stream-stop").click(function () {
+        window.owiWSObject.StopStreaming();
+    });
+
+    setInterval(function () {
+        window.owiWSObject.GetStreamingStatus().then(data => {
+            if (data["streaming"]) {
+                $("#state-online").show();
+                $("#state-offline").hide();
+                $("#stream-start").addClass('disabled');
+                $("#stream-stop").removeClass('disabled');
+                $("#state-timer").show();
+                $("#state-timer").text(data["streamTimecode"].substring(0, data["streamTimecode"].indexOf(".")));
+            } else {
+                $("#state-online").hide();
+                $("#state-offline").show();
+                $("#stream-start").removeClass('disabled');
+                $("#stream-stop").addClass('disabled');
+                $("#state-timer").hide();
+            }
+        });
+    }, 500);
+}
+
 //http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
 function getUrlParameter(sParam) {
     var sPageURL = decodeURIComponent(window.location.search.substring(1)),
@@ -208,76 +167,14 @@ function getUrlParameter(sParam) {
     }
 }
 
-/*
-
-function inputChanged() {
-    let name = $("#sound-input-list").val();
-    let volume = $("#sound-input-range").val();
-
-    window.owiWSObject.SetVolume(name, volume);
+function pad(num) {
+    return ("0" + num).slice(-2);
 }
 
-function filterChanged() {
-    let name = $("#sound-filter-list").val();
-    let volume = $("#sound-filter-range").val();
-
-    window.owiWSObject.SetVolume(name, volume);
+function hhmmss(secs) {
+    var minutes = Math.floor(secs / 60);
+    secs = secs % 60;
+    var hours = Math.floor(minutes / 60);
+    minutes = minutes % 60;
+    return pad(hours) + ":" + pad(minutes) + ":" + pad(secs);
 }
-
-function transitionsChanged() {
-    let name = $("#sound-transition-list").val();
-    let volume = $("#sound-transition-range").val();
-
-    window.owiWSObject.SetVolume(name, volume);
-}
-
-function scenesChanged() {
-    let name = $("#sound-scenes-list").val();
-    let volume = $("#sound-scenes-range").val();
-
-    window.owiWSObject.SetVolume(name, volume);
-}
-
-function unknownChanged() {
-    let name = $("#sound-unknown-list").val();
-    let volume = $("#sound-unknown-range").val();
-
-    window.owiWSObject.SetVolume(name, volume);
-}
-
-function inputInit() {
-    let name = $("#sound-input-list").val();
-    window.owiWSObject.GetVolume(name).then(data => {
-        $("#sound-input-range").val(data.volume);
-    });
-}
-
-function filterInit() {
-    let name = $("#sound-filter-list").val();
-    window.owiWSObject.GetVolume(name).then(data => {
-        $("#sound-filter-range").val(data.volume);
-    });
-}
-
-function transitionsInit() {
-    let name = $("#sound-transition-list").val();
-    window.owiWSObject.GetVolume(name).then(data => {
-        $("#sound-transition-range").val(data.volume);
-    });
-}
-
-function scenesInit() {
-    let name = $("#sound-scenes-list").val();
-    window.owiWSObject.GetVolume(name).then(data => {
-        $("#sound-scenes-range").val(data.volume);
-    });
-}
-
-function unknownInit() {
-    let name = $("#sound-unknown-list").val();
-    window.owiWSObject.GetVolume(name).then(data => {
-        $("#sound-unknown-range").val(data.volume);
-    });
-}
-
-*/
